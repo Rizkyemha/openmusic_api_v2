@@ -1,5 +1,3 @@
-Tentu, ini adalah dokumentasi `readme.md` yang telah diperbarui dengan informasi yang Anda berikan.
-
 # ⚠️ Peringatan (Disclaimer)
 
 Proyek ini adalah submission untuk kelas "Belajar Fundamental Back-End dengan JavaScript" di Dicoding. Repositori ini dibuat hanya untuk tujuan edukasi dan sebagai referensi pribadi.
