@@ -9,6 +9,14 @@ const performerScema = Joi.string().required();
 const durationScema = Joi.number().optional();
 const albumIdScema = Joi.string().optional();
 
+// users
+const usernameScema = Joi.string().required();
+const passwordScema = Joi.string().required();
+
+// authentications
+
+const refreshTokenScema = Joi.string().required();
+
 module.exports = {
 	idScema,
 	nameScema,
@@ -18,4 +26,7 @@ module.exports = {
 	performerScema,
 	durationScema,
 	albumIdScema,
+	usernameScema,
+	passwordScema,
+	refreshTokenScema,
 };

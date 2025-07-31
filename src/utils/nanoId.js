@@ -8,5 +8,9 @@ const createAlbumId = () => {
 	const id = nanoid(16);
 	return `album-${id}`;
 };
+const createUserId = () => {
+	const id = nanoid(16);
+	return `user-${id}`;
+};
 
-module.exports = { createSongId, createAlbumId };
+module.exports = { createSongId, createAlbumId, createUserId };

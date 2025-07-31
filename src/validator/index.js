@@ -1,5 +1,7 @@
 const albumsSchema = require("./albums/scema");
 const songsScema = require("./songs/scema");
+const usersSchema = require("./users/schema");
+
 const InvariantError = require("../utils/exceptions/InvariantError");
 
 const validatePayload = {
@@ -11,6 +13,12 @@ const validatePayload = {
 	},
 	validateSongsPayload: (payload) => {
 		const validationResult = songsScema.validate(payload);
+		if (validationResult.error) {
+			throw new InvariantError(validationResult.error.message);
+		}
+	},
+	validateUserPayload: (payload) => {
+		const validationResult = usersSchema.validate(payload);
 		if (validationResult.error) {
 			throw new InvariantError(validationResult.error.message);
 		}

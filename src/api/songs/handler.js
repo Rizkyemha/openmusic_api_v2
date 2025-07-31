@@ -42,7 +42,6 @@ class SongsHandler {
 		const { id } = request.params;
 
 		const song = await this._service.getSongById(id);
-		console.log(song);
 
 		return {
 			status: "success",

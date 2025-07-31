@@ -65,9 +65,6 @@ class SongsService {
 			throw new NotFoundError("Song tidak ditemukan");
 		}
 
-		const yahaha = result.rows.map(mapDBSongToModel);
-		console.log("yahaha : ", yahaha);
-
 		return result.rows.map(mapDBSongToModel)[0];
 	}
 
