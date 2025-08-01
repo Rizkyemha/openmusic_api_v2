@@ -12,5 +12,19 @@ const createUserId = () => {
 	const id = nanoid(16);
 	return `user-${id}`;
 };
+const createPlaylistId = () => {
+	const id = nanoid(16);
+	return `playlist-${id}`;
+};
+const createPlaylistSongsId = () => {
+	const id = nanoid(16);
+	return `playlist-songs-${id}`;
+};
 
-module.exports = { createSongId, createAlbumId, createUserId };
+module.exports = {
+	createSongId,
+	createAlbumId,
+	createUserId,
+	createPlaylistId,
+	createPlaylistSongsId,
+};
