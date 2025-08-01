@@ -14,8 +14,11 @@ const usernameScema = Joi.string().required();
 const passwordScema = Joi.string().required();
 
 // authentications
-
 const refreshTokenScema = Joi.string().required();
+
+// playlist
+const namePlaylistScema = Joi.string().required();
+const songIdScema = Joi.string().required();
 
 module.exports = {
 	idScema,
@@ -29,4 +32,6 @@ module.exports = {
 	usernameScema,
 	passwordScema,
 	refreshTokenScema,
+	namePlaylistScema,
+	songIdScema,
 };

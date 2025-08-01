@@ -4,10 +4,32 @@ const {
 } = require("../../utils/nanoId");
 const InvariantError = require("../../utils/exceptions/InvariantError");
 const NotFoundError = require("../../utils/exceptions/NotFoundError");
+const AuthenticationError = require("../../utils/exceptions/AuthenticationError");
 
 class PlaylistService {
 	constructor(pool) {
 		this._pool = pool;
+	}
+
+	async verifyPlaylistOwner(playlistId, ownerId) {
+		const query = {
+			text: "SELECT owner FROM playlists WHERE id = $1",
+			values: [playlistId],
+		};
+
+		const result = await this._pool.query(query);
+
+		if (!result.rows.length) {
+			throw new NotFoundError("Playlist tidak ditemukan");
+		}
+
+		const { owner } = result.rows[0];
+
+		if (owner !== ownerId) {
+			throw new AuthenticationError(
+				"Anda tidak berhak mengakses resource ini"
+			);
+		}
 	}
 
 	async addPlaylist(ownerId, { name }) {
