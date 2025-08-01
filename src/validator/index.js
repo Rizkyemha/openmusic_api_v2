@@ -1,5 +1,5 @@
-const albumsSchema = require("./albums/scema");
-const songsScema = require("./songs/scema");
+const albumsSchema = require("./albums/schema");
+const songsScema = require("./songs/schema");
 const usersSchema = require("./users/schema");
 
 const InvariantError = require("../utils/exceptions/InvariantError");

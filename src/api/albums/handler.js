@@ -12,7 +12,7 @@ class AlbumsHandler {
 	}
 
 	async addAlbumHandler(request, h) {
-		this._validator(request.payload);
+		this._validator.validateAlbumsPayload(request.payload);
 
 		const id = await this._service.addAlbum(request.payload);
 
@@ -41,7 +41,7 @@ class AlbumsHandler {
 	}
 
 	async editAlbumByIdHandler(request, h) {
-		this._validator(request.payload);
+		this._validator.validateAlbumsPayload(request.payload);
 		const { id } = request.params;
 
 		await this._service.editAlbumById(id, request.payload);

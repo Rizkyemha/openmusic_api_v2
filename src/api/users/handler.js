@@ -8,7 +8,7 @@ class UsersHandler {
 	}
 
 	async postUserHandler(request, h) {
-		this._validator(request.payload);
+		this._validator.validateUsersPayload(request.payload);
 
 		const id = await this._service.addUser(request.payload);
 
