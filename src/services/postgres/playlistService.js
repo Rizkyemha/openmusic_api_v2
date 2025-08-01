@@ -4,11 +4,12 @@ const {
 } = require("../../utils/nanoId");
 const InvariantError = require("../../utils/exceptions/InvariantError");
 const NotFoundError = require("../../utils/exceptions/NotFoundError");
-const AuthenticationError = require("../../utils/exceptions/AuthenticationError");
+const AuthorizationError = require("../../utils/exceptions/AuthorizationError");
 
 class PlaylistService {
-	constructor(pool) {
+	constructor(pool, collaborationsService) {
 		this._pool = pool;
+		this._collaborationsService = collaborationsService;
 	}
 
 	async verifyPlaylistAccess(playlistId, userId) {
@@ -19,18 +20,19 @@ class PlaylistService {
 				throw error;
 			}
 			try {
-				console.log("mengecek collaboration");
-			} catch (error) {
-				throw new AuthenticationError(
-					"Anda tidak berhak mengakses resource ini"
+				await this._collaborationsService.verifyCollabolator(
+					playlistId,
+					userId
 				);
+			} catch (error) {
+				throw error;
 			}
 		}
 	}
 
 	async verifyPlaylistOwner(playlistId, ownerId) {
 		const query = {
-			text: "SELECT owner FROM playlists WHERE id = $1",
+			text: "SELECT owner FROM playlist WHERE id = $1",
 			values: [playlistId],
 		};
 
@@ -43,7 +45,7 @@ class PlaylistService {
 		const { owner } = result.rows[0];
 
 		if (owner !== ownerId) {
-			throw new AuthenticationError(
+			throw new AuthorizationError(
 				"Anda tidak berhak mengakses resource ini"
 			);
 		}
@@ -89,23 +91,26 @@ class PlaylistService {
             playlist AS p
           JOIN
             users AS u ON p.owner = u.id
-          WHERE p.owner = $1`,
+          LEFT JOIN
+            collaborations AS c ON c.playlist_id = p.id
+          WHERE p.owner = $1 OR c.user_id = $1
+          GROUP BY p.id, u.username`,
 			values: [ownerId],
 		};
 
 		const result = await this._pool.query(query);
 
 		if (!result.rows.length) {
-			throw new NotFoundError("Tidak ada playlist ditemukan");
+			return [];
 		}
 
 		return result.rows;
 	}
 
-	async deletePlaylistById(id) {
+	async deletePlaylistById(id, ownerId) {
 		const query = {
-			text: "DELETE FROM playlist WHERE id = $1",
-			values: [id],
+			text: "DELETE FROM playlist WHERE id = $1 AND owner = $2",
+			values: [id, ownerId],
 		};
 
 		const result = await this._pool.query(query);
@@ -115,7 +120,7 @@ class PlaylistService {
 		}
 	}
 
-	async addSongToPlaylist(playlistId, { songId }) {
+	async addSongToPlaylist(playlistId, songId) {
 		const id = createPlaylistSongsId();
 		const query = {
 			text: "INSERT INTO playlist_songs (id, playlist_id, song_id) VALUES ($1, $2, $3) RETURNING id",
@@ -150,9 +155,10 @@ class PlaylistService {
             playlist AS p
             LEFT JOIN playlist_songs AS ps ON ps.playlist_id = p.id
             LEFT JOIN songs AS s ON ps.song_id = s.id
+            LEFT JOIN collaborations AS c ON c.playlist_id = p.id
             JOIN users AS u ON p.owner = u.id
           WHERE
-            p.id = $1
+            p.id = $1 OR c.playlist_id = $1
           GROUP BY
             p.id, u.username
             `,
@@ -164,7 +170,7 @@ class PlaylistService {
 		return result.rows[0];
 	}
 
-	async deleteSongFromPlaylist(playlistId, { songId }) {
+	async deleteSongFromPlaylist(playlistId, songId) {
 		const query = {
 			text: "DELETE FROM playlist_songs WHERE playlist_id = $1 AND song_id = $2",
 			values: [playlistId, songId],

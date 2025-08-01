@@ -22,6 +22,7 @@ const songIdScema = Joi.string().required();
 
 // collaborations
 const playlistIdScema = Joi.string().required();
+const userIdScema = Joi.string().required();
 
 module.exports = {
 	idScema,
@@ -38,4 +39,5 @@ module.exports = {
 	namePlaylistScema,
 	songIdScema,
 	playlistIdScema,
+	userIdScema,
 };

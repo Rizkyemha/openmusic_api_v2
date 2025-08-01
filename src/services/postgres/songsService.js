@@ -62,7 +62,7 @@ class SongsService {
 		const result = await this._pool.query(query);
 
 		if (!result.rows.length) {
-			throw new NotFoundError("Song tidak ditemukan");
+			throw new NotFoundError("Lagu tidak ditemukan");
 		}
 
 		return result.rows.map(mapDBSongToModel)[0];
