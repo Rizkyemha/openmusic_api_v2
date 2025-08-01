@@ -20,6 +20,9 @@ const refreshTokenScema = Joi.string().required();
 const namePlaylistScema = Joi.string().required();
 const songIdScema = Joi.string().required();
 
+// collaborations
+const playlistIdScema = Joi.string().required();
+
 module.exports = {
 	idScema,
 	nameScema,
@@ -34,4 +37,5 @@ module.exports = {
 	refreshTokenScema,
 	namePlaylistScema,
 	songIdScema,
+	playlistIdScema,
 };
