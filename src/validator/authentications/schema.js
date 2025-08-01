@@ -3,18 +3,18 @@ const {
 	passwordScema,
 	refreshTokenScema,
 } = require("../schemaElement");
-const Joi = require("../utils/joi");
+const Joi = require("../../utils/joi");
 
-const authenticationsCreateRefreshTokenSchema = Joi.object({
+const authenticationsPostRefreshTokenSchema = Joi.object({
 	username: usernameScema,
 	password: passwordScema,
 });
 
-const authenticationsRefreshTokenSchema = Joi.object({
+const authenticationsPutRefreshTokenSchema = Joi.object({
 	refreshToken: refreshTokenScema,
 });
 
 module.exports = {
-	authenticationsCreateRefreshTokenSchema,
-	authenticationsRefreshTokenSchema,
+	authenticationsPostRefreshTokenSchema,
+	authenticationsPutRefreshTokenSchema,
 };

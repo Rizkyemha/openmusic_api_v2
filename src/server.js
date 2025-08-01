@@ -18,6 +18,7 @@ const validatorUsers = require("./validator/users");
 const authentications = require("./api/authentications");
 const AuthenticationsService = require("./services/postgres/authenticationsService");
 const tokenManager = require("./tokenize/tokenManager");
+const validatorAuthentications = require("./validator/authentications");
 
 const init = async () => {
 	const albumsService = new AlbumsService(pool);
@@ -85,6 +86,7 @@ const init = async () => {
 				authenticationsService,
 				usersService,
 				tokenManager,
+				validator: validatorAuthentications,
 			},
 		},
 	]);
