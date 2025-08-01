@@ -11,6 +11,23 @@ class PlaylistService {
 		this._pool = pool;
 	}
 
+	async verifyPlaylistAccess(playlistId, userId) {
+		try {
+			await this.verifyPlaylistOwner(playlistId, userId);
+		} catch (error) {
+			if (error instanceof NotFoundError) {
+				throw error;
+			}
+			try {
+				console.log("mengecek collaboration");
+			} catch (error) {
+				throw new AuthenticationError(
+					"Anda tidak berhak mengakses resource ini"
+				);
+			}
+		}
+	}
+
 	async verifyPlaylistOwner(playlistId, ownerId) {
 		const query = {
 			text: "SELECT owner FROM playlists WHERE id = $1",
@@ -32,10 +49,23 @@ class PlaylistService {
 		}
 	}
 
+	async verifySongInPlaylist(playlistId, { songId }) {
+		const query = {
+			text: "SELECT * FROM playlist_songs WHERE playlist_id = $1 AND song_id = $2",
+			values: [playlistId, songId],
+		};
+
+		const result = await this._pool.query(query);
+
+		if (result.rows.length) {
+			throw new InvariantError("Lagu sudah ada di dalam playlist");
+		}
+	}
+
 	async addPlaylist(ownerId, { name }) {
 		const id = createPlaylistId();
 		const query = {
-			text: "INSERT INTO playlists (id, name, owner) VALUES ($1, $2, $3) RETURNING id",
+			text: "INSERT INTO playlist (id, name, owner) VALUES ($1, $2, $3) RETURNING id",
 			values: [id, name, ownerId],
 		};
 
@@ -56,7 +86,7 @@ class PlaylistService {
             p.name,
             u.username
           FROM 
-            playlists AS p
+            playlist AS p
           JOIN
             users AS u ON p.owner = u.id
           WHERE p.owner = $1`,
@@ -74,7 +104,7 @@ class PlaylistService {
 
 	async deletePlaylistById(id) {
 		const query = {
-			text: "DELETE FROM playlists WHERE id = $1",
+			text: "DELETE FROM playlist WHERE id = $1",
 			values: [id],
 		};
 
@@ -88,7 +118,7 @@ class PlaylistService {
 	async addSongToPlaylist(playlistId, { songId }) {
 		const id = createPlaylistSongsId();
 		const query = {
-			text: "INSERT INTO playlist_songs (id, playlist_id, song_id) VALUES ($1, $2) RETURNING id",
+			text: "INSERT INTO playlist_songs (id, playlist_id, song_id) VALUES ($1, $2, $3) RETURNING id",
 			values: [id, playlistId, songId],
 		};
 
@@ -117,7 +147,7 @@ class PlaylistService {
             '[]'::json
           ) AS songs
           FROM
-            playlists AS p
+            playlist AS p
             LEFT JOIN playlist_songs AS ps ON ps.playlist_id = p.id
             LEFT JOIN songs AS s ON ps.song_id = s.id
             JOIN users AS u ON p.owner = u.id
@@ -131,7 +161,7 @@ class PlaylistService {
 
 		const result = await this._pool.query(query);
 
-		return result.rows;
+		return result.rows[0];
 	}
 
 	async deleteSongFromPlaylist(playlistId, { songId }) {
