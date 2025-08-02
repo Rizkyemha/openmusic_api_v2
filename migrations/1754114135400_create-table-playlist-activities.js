@@ -25,6 +25,13 @@ exports.up = (pgm) => {
 			referencesConstraintName: "fk_playlist_activities.user_id_users.id",
 			onDelete: "CASCADE",
 		},
+		song_id: {
+			type: "VARCHAR(50)",
+			notNull: true,
+			references: "songs(id)",
+			referencesConstraintName: "fk_playlist_activities.song_id_songs.id",
+			onDelete: "CASCADE",
+		},
 		time: {
 			type: "TIMESTAMP",
 			notNull: true,

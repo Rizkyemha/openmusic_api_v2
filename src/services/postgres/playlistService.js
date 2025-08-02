@@ -1,6 +1,7 @@
 const {
 	createPlaylistId,
 	createPlaylistSongsId,
+	createPlaylistActionId,
 } = require("../../utils/nanoId");
 const InvariantError = require("../../utils/exceptions/InvariantError");
 const NotFoundError = require("../../utils/exceptions/NotFoundError");
@@ -51,7 +52,7 @@ class PlaylistService {
 		}
 	}
 
-	async verifySongInPlaylist(playlistId, { songId }) {
+	async verifySongInPlaylist(playlistId, songId) {
 		const query = {
 			text: "SELECT * FROM playlist_songs WHERE playlist_id = $1 AND song_id = $2",
 			values: [playlistId, songId],
@@ -183,6 +184,53 @@ class PlaylistService {
 				"Gagal menghapus lagu dari playlist. Id tidak ditemukan"
 			);
 		}
+	}
+
+	async addPlaylistAction(playlistId, userId, song_id, action) {
+		const id = createPlaylistActionId();
+		const time = new Date().toISOString();
+
+		const query = {
+			text: "INSERT INTO playlist_activities (id, action, playlist_id, user_id, song_id, time) VALUES ($1, $2, $3, $4, $5, $6)",
+			values: [id, action, playlistId, userId, song_id, time],
+		};
+
+		const result = await this._pool.query(query);
+
+		if (!result.rowCount) {
+			throw new InvariantError("Gagal menambahkan aktivitas playlist");
+		}
+	}
+
+	async getPlaylistActivities(playlistId) {
+		const query = {
+			text: `
+			SELECT
+				u.username,
+				s.title,
+				pa.action,
+				pa.time
+			FROM
+				playlist_activities AS pa
+			JOIN
+				songs AS s ON s.id = pa.song_id
+			JOIN
+				users AS u ON u.id = pa.user_id
+			WHERE
+				pa.playlist_id = $1
+			ORDER BY
+				pa.time DESC
+			`,
+			values: [playlistId],
+		};
+
+		const result = await this._pool.query(query);
+
+		if (!result.rows.length) {
+			return [];
+		}
+
+		return result.rows;
 	}
 }
 

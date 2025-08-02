@@ -27,6 +27,11 @@ const createCollaborationId = () => {
 	return `collaboration-${id}`;
 };
 
+const createPlaylistActionId = () => {
+	const id = nanoid(16);
+	return `playlist-action-${id}`;
+};
+
 module.exports = {
 	createSongId,
 	createAlbumId,
@@ -34,4 +39,5 @@ module.exports = {
 	createPlaylistId,
 	createPlaylistSongsId,
 	createCollaborationId,
+	createPlaylistActionId,
 };
