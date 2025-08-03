@@ -141,14 +141,15 @@ class PlaylistHandler {
 
 		await this._playlistService.verifyPlaylistAccess(playlistId, ownerId);
 
-		const playlistActivities =
-			await this._playlistService.getPlaylistActivities(playlistId);
+		const activities = await this._playlistService.getPlaylistActivities(
+			playlistId
+		);
 
 		return {
 			status: "success",
 			data: {
 				playlistId,
-				playlistActivities,
+				activities,
 			},
 		};
 	}
