@@ -219,7 +219,7 @@ class PlaylistService {
 			WHERE
 				pa.playlist_id = $1
 			ORDER BY
-				pa.time DESC
+				pa.time ASC
 			`,
 			values: [playlistId],
 		};
@@ -227,7 +227,7 @@ class PlaylistService {
 		const result = await this._pool.query(query);
 
 		if (!result.rows.length) {
-			return [];
+			throw new NotFoundError("Playlist tidak ditemukan");
 		}
 
 		return result.rows;
