@@ -9,18 +9,14 @@ const performerScema = Joi.string().required();
 const durationScema = Joi.number().optional();
 const albumIdScema = Joi.string().optional();
 
-// users
 const usernameScema = Joi.string().required();
 const passwordScema = Joi.string().required();
 
-// authentications
 const refreshTokenScema = Joi.string().required();
 
-// playlist
 const namePlaylistScema = Joi.string().required();
 const songIdScema = Joi.string().required();
 
-// collaborations
 const playlistIdScema = Joi.string().required();
 const userIdScema = Joi.string().required();
 

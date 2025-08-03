@@ -97,9 +97,6 @@ class PlaylistHandler {
 		const { id: ownerId } = request.auth.credentials;
 		const { id: playlistId } = request.params;
 
-		// belum membuat authorization service
-		// await this._validator.verifyPlaylistOwner(ownerId);
-
 		await this._playlistService.verifyPlaylistAccess(playlistId, ownerId);
 
 		const playlist = await this._playlistService.getSongsFromPlaylist(
@@ -121,9 +118,6 @@ class PlaylistHandler {
 		const { id: playlistId } = request.params;
 		const { songId } = request.payload;
 		const action = "delete";
-
-		// belum membuat authorization service
-		// await this._validator.verifyPlaylistOwner(ownerId);
 
 		await this._playlistService.verifyPlaylistAccess(playlistId, ownerId);
 		await this._songsService.getSongById(songId);
