@@ -3,7 +3,6 @@ exports.up = (pgm) => {
 		refresh_token: {
 			type: "TEXT",
 			notNull: true,
-			unique: true,
 		},
 	});
 };
